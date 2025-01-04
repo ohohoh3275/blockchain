@@ -1,4 +1,4 @@
-# module 1 - create a cryptocurrency
+# module 2 - create a cryptocurrency
 
 import datetime
 import hashlib
@@ -8,11 +8,11 @@ import requests
 from uuid import uuid4
 from urllib.parse import urlparse
 
-# building a blockchain
 class Blockchain:
     def __init__(self):
         self.chain = []
-        # genesis block create
+        # transaction
+        self.transactions=[]
         self.create_block(proof=1, previous_hash='0')
 
     def create_block(self, proof, previous_hash):
@@ -21,9 +21,10 @@ class Blockchain:
             'timestamp': str(datetime.datetime.now()),
             'proof': proof,
             'previous_hash': previous_hash,
-            #TODO: 'data': data
+            # transactions added
+            'transactions': self.transactions
         }
-
+        self.transactions=[]
         self.chain.append(block)
         return block
     
@@ -35,7 +36,7 @@ class Blockchain:
         check_proof=False
         while check_proof is False:
             hash_operation=hashlib.sha256(str(int(new_proof)**2 - int(privious_proof)**2).encode()).hexdigest()
-            if hash_operation[:4] == '0000': # first check
+            if hash_operation[:4] == '0000':
                 check_proof=True
             else:
                 new_proof+=1
@@ -61,12 +62,17 @@ class Blockchain:
             block_index+=1
         return True
 
-
-# mining our blockchain
+    def add_transaction(self, sender, receiver, amount):
+        self.transactions.append({
+            'sender': sender,
+            'receiver': receiver,
+            'amount': amount
+        })
+        previous_block=self.previous_block()
+        return previous_block['index']+1
 
 app = Flask(__name__)
 
-# create class Blockchain
 blockchain=Blockchain()
 
 @app.route('/mine_block', methods=['GET'])
@@ -85,7 +91,6 @@ def mine_block():
     }
     return jsonify(response), 200
 
-# get the full blockchain
 @app.route('/get_chain', methods=['GET'])
 def get_chain():
     response={
