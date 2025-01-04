@@ -1,10 +1,10 @@
-### 업데이트 요청
-PUT https://jsonplaceholder.typicode.com/posts/1 HTTP/1.1
-Content-Type: application/json; charset=UTF-8
+### get_chain
+GET http://127.0.0.1:5000/get_chain
 
-{
-  "id": 1,
-  "title": "Updated Title",
-  "body": "Updated Body",
-  "userId": 1
-}
+
+### mine_block
+GET http://127.0.0.1:5000/mine_block
+
+
+### is_valid
+GET http://127.0.0.1:5000/is_valid

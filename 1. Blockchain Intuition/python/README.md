@@ -9,4 +9,4 @@
 
    - automatic script needed
 
-4. `flask run`
+4. `export FLASK_APP=main.py && flask run`
