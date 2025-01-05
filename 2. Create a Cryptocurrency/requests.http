@@ -1,0 +1,47 @@
+### get_chain
+GET http://127.0.0.1:5000/get_chain
+
+
+### mine_block
+GET http://127.0.0.1:5000/mine_block
+
+
+### is_valid
+GET http://127.0.0.1:5000/is_valid
+
+### 5001 get chain
+GET http://127.0.0.1:5001/get_chain
+
+### 5002 get chain
+GET http://127.0.0.1:5002/get_chain
+
+### 5003 get chain
+GET http://127.0.0.1:5003/get_chain
+
+### 5001 connect node
+POST http://127.0.0.1:5001/connect_node
+{
+    "nodes": [
+        "http://127.0.0.1:5002",
+        "http://127.0.0.1:5003",
+    ]
+}
+
+### 5002 connect node
+POST http://127.0.0.1:5002/connect_node
+{
+    "nodes": [
+        "http://127.0.0.1:5001",
+        "http://127.0.0.1:5003",
+    ]
+}
+
+### 5003 connect node
+POST http://127.0.0.1:5003/connect_node
+{
+    "nodes": [
+        "http://127.0.0.1:5001",
+        "http://127.0.0.1:5002",
+    ]
+}
+
