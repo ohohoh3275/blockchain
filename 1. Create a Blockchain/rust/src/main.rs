@@ -1,7 +1,32 @@
+use std::time::SystemTime;
+
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
-// blockchain object
 
+struct Chain {
+    index: i32,
+    timestamp: SystemTime,
+    proof: String,
+    previous_hash: String
+}
+trait BlockchainTrait {
+    fn create_block(&mut self, proof: String, previous_hash: String) -> Chain;
+}
+
+impl BlockchainTrait for Chain{
+    fn create_block(&mut self, proof: String, previous_hash: String) -> Chain {
+        let  new_index = self.index+1;
+        let chain= Chain {
+            index: new_index,
+            timestamp: SystemTime::now(),
+            proof: String::from(proof),
+            previous_hash: String::from(previous_hash)
+        };
+
+        // ...
+        chain
+    }
+}
 
 #[get("/")]
 async fn hello() -> impl Responder {
