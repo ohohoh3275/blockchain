@@ -2,29 +2,34 @@ use std::time::SystemTime;
 
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
-
-struct Chain {
-    index: i32,
+#[derive(Clone)]
+struct Block {
+    index: usize,
     timestamp: SystemTime,
     proof: String,
     previous_hash: String
 }
-trait BlockchainTrait {
-    fn create_block(&mut self, proof: String, previous_hash: String) -> Chain;
+
+struct Blockchain {
+    chain: Vec<Block>
 }
 
-impl BlockchainTrait for Chain{
-    fn create_block(&mut self, proof: String, previous_hash: String) -> Chain {
-        let  new_index = self.index+1;
-        let chain= Chain {
+trait BlockchainTrait {
+    fn create_block(&mut self, proof: String, previous_hash: String) -> Block;
+}
+
+impl BlockchainTrait for Blockchain {
+    fn create_block(&mut self, proof: String, previous_hash: String) -> Block {
+        let new_index: usize = self.chain.len()+1;
+        let block= Block {
             index: new_index,
             timestamp: SystemTime::now(),
             proof: String::from(proof),
             previous_hash: String::from(previous_hash)
         };
 
-        // ...
-        chain
+        self.chain.push(block.clone()); // clone 하지 않으면, 소유권이 이동해서 
+        return block; // 여기서 리턴할 block이 없어지게 됨. (clone을 사용해서 원래 block을 반환할 수 있음)
     }
 }
 
