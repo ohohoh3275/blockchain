@@ -15,11 +15,11 @@ struct Blockchain {
 }
 
 trait BlockchainTrait {
-    fn create_block(&mut self, proof: String, previous_hash: String) -> Block;
+    fn create_block(&mut self, proof: String, previous_hash: String) -> &Block;
 }
 
 impl BlockchainTrait for Blockchain {
-    fn create_block(&mut self, proof: String, previous_hash: String) -> Block {
+    fn create_block(&mut self, proof: String, previous_hash: String) -> &Block {
         let new_index: usize = self.chain.len()+1;
         let block= Block {
             index: new_index,
@@ -28,8 +28,8 @@ impl BlockchainTrait for Blockchain {
             previous_hash: String::from(previous_hash)
         };
 
-        self.chain.push(block.clone()); // clone 하지 않으면, 소유권이 이동해서 
-        return block; // 여기서 리턴할 block이 없어지게 됨. (clone을 사용해서 원래 block을 반환할 수 있음)
+        self.chain.push(block); 
+        return self.chain.last().unwrap();
     }
 }
 
