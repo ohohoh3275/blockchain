@@ -15,11 +15,11 @@ struct Blockchain {
 }
 
 trait BlockchainTrait {
-    fn create_block(&mut self, proof: String, previous_hash: String) -> &Block;
+    fn create_block(&mut self, proof: String, previous_hash: String) -> Option<&Block>;
 }
 
 impl BlockchainTrait for Blockchain {
-    fn create_block(&mut self, proof: String, previous_hash: String) -> &Block {
+    fn create_block(&mut self, proof: String, previous_hash: String) -> Option<&Block> {
         let new_index: usize = self.chain.len()+1;
         let block= Block {
             index: new_index,
@@ -28,8 +28,9 @@ impl BlockchainTrait for Blockchain {
             previous_hash: String::from(previous_hash)
         };
 
-        self.chain.push(block); 
-        return self.chain.last().unwrap();
+        self.chain.push(block);
+        let last_chain= Some(self.chain.last());
+        return last_chain.unwrap_or_default();
     }
 }
 
