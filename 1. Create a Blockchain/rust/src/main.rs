@@ -16,6 +16,7 @@ struct Blockchain {
 
 trait BlockchainTrait {
     fn create_block(&mut self, proof: String, previous_hash: String) -> Option<&Block>;
+    fn get_previous_block(&mut self) -> Option<&Block>;
 }
 
 impl BlockchainTrait for Blockchain {
@@ -31,6 +32,10 @@ impl BlockchainTrait for Blockchain {
         self.chain.push(block);
         let last_chain= Some(self.chain.last());
         return last_chain.unwrap_or_default();
+    }
+
+    fn get_previous_block(&mut self) -> Option<&Block> {
+        return self.chain.last(); // last() 는 Option<T> 
     }
 }
 
