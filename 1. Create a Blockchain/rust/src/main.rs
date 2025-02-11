@@ -18,7 +18,9 @@ struct Blockchain {
 trait BlockchainTrait {
     fn create_block(&mut self, proof: String, previous_hash: String) -> Option<&Block>;
     fn get_previous_block(&mut self) -> Option<&Block>;
-    fn proof_of_work(&mut self, previous_proof: String) -> i32;
+    fn proof_of_work(previous_proof: i32) -> i32;
+    fn hash(&mut self, block: &Block)-> String;
+    fn is_chain_valid(&mut self, chain: &Blockchain) -> bool;
 }
 
 impl BlockchainTrait for Blockchain {
@@ -40,24 +42,35 @@ impl BlockchainTrait for Blockchain {
         return self.chain.last(); // last() 는 Option<T> 
     }
 
-    fn proof_of_work(&mut self, previous_proof: String) -> i32 {
-        let mut new_proof=1;
-        let mut check_proof:bool=false;
-        while check_proof == false {
-            let mut hasher = Sha256::new();
-            let s: String = previous_proof.to_string();
-            let previous_proof_number: i32 = s.parse().expect("Not a valid number");
-            hasher.update(new_proof*2 - previous_proof_number*2); // !
-            let hash_operation = hasher.finalize();
 
-            if hash_operation[-4] == 0000 {
-                check_proof = true
+    fn proof_of_work(previous_proof: i32) -> i32 {
+        let mut new_proof = 1;
+        let mut check_proof = false;
+
+        while !check_proof {
+            let mut hasher = Sha256::new();
+            let input = format!("{}", new_proof * 2 - previous_proof * 2);
+            hasher.update(input.as_bytes());
+
+            let hash_operation = hasher.finalize();
+            let hash_hex = format!("{:x}", hash_operation); 
+
+            if hash_hex.starts_with("0000") {
+                check_proof = true;
             } else {
-                new_proof += 1
+                new_proof += 1;
             }
         }
 
         return new_proof
+    }
+    
+    fn hash(&mut self, block: &Block)-> String {
+        todo!()
+    }
+    
+    fn is_chain_valid(&mut self, chain: &Blockchain) -> bool {
+        todo!()
     }
 
 
