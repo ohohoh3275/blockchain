@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>블록체인 시연</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background: #f8f9fa;
+        min-height: 100vh;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .main-container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+      .block-card {
+        background: #007bff;
+        border-radius: 15px;
+        color: white;
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
+      }
+      .block-card:hover {
+        transform: translateY(-5px);
+      }
+      .btn-mine {
+        background: #007bff;
+        border: none;
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+      .btn-mine:hover {
+        background: #0056b3;
+        transform: scale(1.05);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+      .btn-validate {
+        background: #007bff;
+        border: none;
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-weight: bold;
+      }
+      .btn-validate:hover {
+        background: #0056b3;
+      }
+      .btn-view {
+        background: #007bff;
+        border: none;
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-weight: bold;
+      }
+      .btn-view:hover {
+        background: #0056b3;
+      }
+      .hash-display {
+        font-family: "Courier New", monospace;
+        font-size: 0.8em;
+        word-break: break-all;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 10px;
+        border-radius: 8px;
+      }
+      .loading {
+        display: none;
+      }
+      .spinner-border-sm {
+        width: 1rem;
+        height: 1rem;
+      }
+      .status-badge {
+        font-size: 0.8em;
+        padding: 5px 10px;
+      }
+      .block-index {
+        font-size: 1.2em;
+        font-weight: bold;
+      }
+      .timestamp {
+        font-size: 0.9em;
+        opacity: 0.8;
+      }
+      .card {
+        background: white;
+        border: 1px solid #e9ecef;
+      }
+      .text-primary {
+        color: #007bff !important;
+      }
+      .bg-success {
+        background-color: #007bff !important;
+      }
+      .bg-danger {
+        background-color: #dc3545 !important;
+      }
+      .bg-warning {
+        background-color: #ffc107 !important;
+        color: #212529 !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container py-5">
+      <div class="main-container p-4">
+        <div class="text-center mb-5">
+          <h1 class="display-4 fw-bold text-primary mb-3">
+            <i class="fas fa-link me-3"></i>블록체인 시연
+          </h1>
+          <p class="lead text-muted">
+            블록체인의 기본 개념을 실시간으로 체험해보세요
+          </p>
+        </div>
+
+        <!-- 제어 버튼들 -->
+        <div class="row mb-4">
+          <div class="col-md-4 mb-2">
+            <button class="btn btn-mine text-white w-100" onclick="mineBlock()">
+              <i class="fas fa-hammer me-2"></i>
+              <span class="btn-text">블록 채굴</span>
+              <span class="loading">
+                <span class="spinner-border spinner-border-sm me-2"></span>채굴
+                중...
+              </span>
+            </button>
+          </div>
+          <div class="col-md-4 mb-2">
+            <button
+              class="btn btn-validate text-white w-100"
+              onclick="validateChain()"
+            >
+              <i class="fas fa-shield-alt me-2"></i>
+              <span class="btn-text">유효성 검증</span>
+              <span class="loading">
+                <span class="spinner-border spinner-border-sm me-2"></span>검증
+                중...
+              </span>
+            </button>
+          </div>
+          <div class="col-md-4 mb-2">
+            <button class="btn btn-view text-white w-100" onclick="viewChain()">
+              <i class="fas fa-list me-2"></i>
+              <span class="btn-text">체인 조회</span>
+              <span class="loading">
+                <span class="spinner-border spinner-border-sm me-2"></span>조회
+                중...
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 상태 표시 -->
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <div class="card border-0 bg-light">
+              <div class="card-body text-center">
+                <h5 class="card-title">총 블록 수</h5>
+                <h2 class="text-primary" id="blockCount">1</h2>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card border-0 bg-light">
+              <div class="card-body text-center">
+                <h5 class="card-title">체인 상태</h5>
+                <span class="badge bg-success status-badge" id="chainStatus"
+                  >유효함</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 결과 표시 영역 -->
+        <div id="resultArea" class="mb-4"></div>
+
+        <!-- 블록체인 표시 영역 -->
+        <div id="blockchainDisplay"></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // 페이지 로드 시 초기 데이터 로드
+      document.addEventListener("DOMContentLoaded", function () {
+        viewChain();
+      });
+
+      function showLoading(button) {
+        const btnText = button.querySelector(".btn-text");
+        const loading = button.querySelector(".loading");
+        btnText.style.display = "none";
+        loading.style.display = "inline-block";
+        button.disabled = true;
+      }
+
+      function hideLoading(button) {
+        const btnText = button.querySelector(".btn-text");
+        const loading = button.querySelector(".loading");
+        btnText.style.display = "inline-block";
+        loading.style.display = "none";
+        button.disabled = false;
+      }
+
+      function showResult(message, type = "info") {
+        const resultArea = document.getElementById("resultArea");
+        const alertClass =
+          type === "success"
+            ? "alert-success"
+            : type === "error"
+            ? "alert-danger"
+            : "alert-info";
+
+        resultArea.innerHTML = `
+                <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+      }
+
+      async function mineBlock() {
+        const button = event.target.closest("button");
+        showLoading(button);
+
+        try {
+          const response = await fetch("/mine_block");
+          const data = await response.json();
+
+          showResult(
+            `
+                    <strong>${data.message}</strong><br>
+                    블록 인덱스: ${data.index}<br>
+                    타임스탬프: ${data.timestamp}<br>
+                    작업 증명: ${data.proof}<br>
+                    이전 해시: <span class="hash-display">${data.previous_hash}</span>
+                `,
+            "success"
+          );
+
+          viewChain();
+        } catch (error) {
+          showResult(
+            "블록 채굴 중 오류가 발생했습니다: " + error.message,
+            "error"
+          );
+        } finally {
+          hideLoading(button);
+        }
+      }
+
+      async function validateChain() {
+        const button = event.target.closest("button");
+        showLoading(button);
+
+        try {
+          const response = await fetch("/is_valid");
+          const data = await response.json();
+
+          const statusElement = document.getElementById("chainStatus");
+          if (data.is_valid) {
+            statusElement.className = "badge bg-success status-badge";
+            statusElement.textContent = "유효함";
+            showResult("✅ 블록체인이 유효합니다!", "success");
+          } else {
+            statusElement.className = "badge bg-danger status-badge";
+            statusElement.textContent = "무효함";
+            showResult("❌ 블록체인이 무효합니다!", "error");
+          }
+        } catch (error) {
+          showResult(
+            "유효성 검증 중 오류가 발생했습니다: " + error.message,
+            "error"
+          );
+        } finally {
+          hideLoading(button);
+        }
+      }
+
+      async function viewChain() {
+        const button = event.target.closest("button");
+        showLoading(button);
+
+        try {
+          const response = await fetch("/get_chain");
+          const data = await response.json();
+
+          document.getElementById("blockCount").textContent = data.length;
+
+          const blockchainDisplay =
+            document.getElementById("blockchainDisplay");
+          let html =
+            '<h3 class="mb-4"><i class="fas fa-cubes me-2"></i>블록체인</h3>';
+
+          data.chain.forEach((block, index) => {
+            const isGenesis = index === 0;
+            html += `
+                        <div class="block-card p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <span class="block-index">블록 #${
+                                      block.index
+                                    }</span>
+                                    ${
+                                      isGenesis
+                                        ? '<span class="badge bg-warning ms-2">Genesis</span>'
+                                        : ""
+                                    }
+                                </div>
+                                <span class="timestamp">${
+                                  block.timestamp
+                                }</span>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>작업 증명:</strong> ${block.proof}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>이전 해시:</strong>
+                                    <div class="hash-display mt-1">${
+                                      block.previous_hash
+                                    }</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+          });
+
+          blockchainDisplay.innerHTML = html;
+        } catch (error) {
+          showResult(
+            "체인 조회 중 오류가 발생했습니다: " + error.message,
+            "error"
+          );
+        } finally {
+          hideLoading(button);
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -3,6 +3,8 @@ use std::time::SystemTime;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use sha2::{Sha256, Digest};
 
+use std::ptr::hash;
+
 #[derive(Clone)]
 struct Block {
     index: usize,
@@ -20,7 +22,7 @@ trait BlockchainTrait {
     fn get_previous_block(&mut self) -> Option<&Block>;
     fn proof_of_work(previous_proof: i32) -> i32;
     fn hash(&mut self, block: &Block)-> String;
-    fn is_chain_valid(&mut self, chain: &Blockchain) -> bool;
+    fn is_chain_valid(chain: &Vec<Block>) -> bool;
 }
 
 impl BlockchainTrait for Blockchain {
@@ -48,7 +50,7 @@ impl BlockchainTrait for Blockchain {
         let mut check_proof = false;
 
         while !check_proof {
-            let mut hasher = Sha256::new();
+            let mut hasher = Sha256::new(); // TODO: common hasher
             let input = format!("{}", new_proof * 2 - previous_proof * 2);
             hasher.update(input.as_bytes());
 
@@ -69,9 +71,42 @@ impl BlockchainTrait for Blockchain {
         todo!()
     }
     
-    fn is_chain_valid(&mut self, chain: &Blockchain) -> bool {
-        todo!()
+    fn is_chain_valid(chain: &Vec<Block>) -> bool {
+        if chain.is_empty() {
+            return false;
+        }
+    
+        let mut previous_block = &chain[0];
+        let mut block_index = 1;
+        
+        while block_index < chain.len() {
+            let block = &chain[block_index];
+            let mut hasher = Sha256::new();
+            if block.previous_hash != hasher(&mut previous_block).unwrap_or_default() {
+                return false;
+            }
+    
+            let previous_proof = previous_block.proof;
+            let previous_proof_num = previous_proof.parse::<i32>().un;
+            let proof = block.proof;
+            let proof_num = proof.parse::<i32>().unwrap();
+            let proof_difference = proof_num.abs().pow(2) as i64 - previous_proof_num.abs().pow(2) as i64;
+
+            let mut hasher = Sha256::new();
+            hasher.update(proof_difference.to_string().as_bytes());
+            let hash_operation = format!("{:x}", hasher.finalize());
+            
+            if &hash_operation[..4] != "0000" {
+                return false;
+            }
+    
+            previous_block = block;
+            block_index += 1;
+        }
+        true
     }
+        
+    
 
 
 }
@@ -88,6 +123,9 @@ async fn get_chain(req_body: String) -> impl Responder {
 
 #[get("/mine_block")]
 async fn mine_block(req_body: String) -> impl Responder {
+    let response = {
+        'chain': 
+    }
     HttpResponse::Ok().body(req_body)
 }
 

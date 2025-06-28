@@ -1,0 +1,27 @@
+[project]
+name = "blockchain-demo"
+version = "0.1.0"
+description = "Blockchain demonstration with web UI"
+requires-python = ">=3.8.1"
+dependencies = [
+    "flask>=2.3.0",
+    "requests>=2.31.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
