@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>암호화폐 블록체인 시스템</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        font-weight: 300;
+      }
+
+      .header p {
+        font-size: 1.1em;
+        opacity: 0.9;
+      }
+
+      .content {
+        padding: 30px;
+      }
+
+      .section {
+        margin-bottom: 40px;
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid #3498db;
+      }
+
+      .section h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+        border-bottom: 3px solid #3498db;
+        padding-bottom: 10px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #34495e;
+      }
+
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #3498db;
+      }
+
+      .btn {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      }
+
+      .btn-warning {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      }
+
+      .btn-info {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      }
+
+      .result {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        background: #f8f9fa;
+        border-left: 4px solid #3498db;
+      }
+
+      .result.success {
+        background: #e3f2fd;
+        border-left-color: #3498db;
+        color: #1565c0;
+      }
+
+      .result.error {
+        background: #ffebee;
+        border-left-color: #e74c3c;
+        color: #c62828;
+      }
+
+      .result pre {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 15px;
+        border-radius: 5px;
+        overflow-x: auto;
+        font-size: 12px;
+        line-height: 1.4;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .node-status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        border-left: 4px solid #e0e0e0;
+      }
+
+      .node-status.online {
+        background: #e3f2fd;
+        border-left-color: #3498db;
+      }
+
+      .node-status.offline {
+        background: #ffebee;
+        border-left-color: #e74c3c;
+      }
+
+      .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+      }
+
+      .status-indicator.online {
+        background: #3498db;
+      }
+
+      .status-indicator.offline {
+        background: #e74c3c;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        padding: 20px;
+      }
+
+      .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 10px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      .stat-card h3 {
+        font-size: 2em;
+        margin-bottom: 5px;
+      }
+
+      .stat-card p {
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🔗 암호화폐 블록체인 시스템</h1>
+        <p>분산형 블록체인 네트워크 관리 및 트랜잭션 처리</p>
+      </div>
+
+      <div class="content">
+        <!-- 노드 상태 섹션 -->
+        <div class="section">
+          <h2>🌐 노드 관리</h2>
+          <div class="grid">
+            <div>
+              <h3>노드 시작</h3>
+              <button class="btn btn-success" onclick="startNodes()">
+                노드들 시작
+              </button>
+              <div class="node-status" id="node-5000">
+                <span
+                  ><span class="status-indicator offline"></span>메인 노드 (포트
+                  5000)</span
+                >
+                <span>상태: <span id="status-5000">오프라인</span></span>
+              </div>
+              <div class="node-status" id="node-5001">
+                <span
+                  ><span class="status-indicator offline"></span>노드 1 (포트
+                  5001)</span
+                >
+                <span>상태: <span id="status-5001">오프라인</span></span>
+              </div>
+              <div class="node-status" id="node-5002">
+                <span
+                  ><span class="status-indicator offline"></span>노드 2 (포트
+                  5002)</span
+                >
+                <span>상태: <span id="status-5002">오프라인</span></span>
+              </div>
+              <div class="node-status" id="node-5003">
+                <span
+                  ><span class="status-indicator offline"></span>노드 3 (포트
+                  5003)</span
+                >
+                <span>상태: <span id="status-5003">오프라인</span></span>
+              </div>
+            </div>
+            <div>
+              <h3>노드 연결</h3>
+              <div class="form-group">
+                <label>대상 노드:</label>
+                <select id="targetNode">
+                  <option value="http://127.0.0.1:5000">
+                    메인 노드 (5000)
+                  </option>
+                  <option value="http://127.0.0.1:5001">노드 1 (5001)</option>
+                  <option value="http://127.0.0.1:5002">노드 2 (5002)</option>
+                  <option value="http://127.0.0.1:5003">노드 3 (5003)</option>
+                </select>
+              </div>
+              <button class="btn btn-info" onclick="connectNodes()">
+                노드들 연결
+              </button>
+              <button class="btn btn-warning" onclick="replaceChain()">
+                체인 동기화
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 블록체인 통계 -->
+        <div class="section">
+          <h2>📊 블록체인 통계</h2>
+          <div class="stats" id="blockchainStats">
+            <div class="stat-card">
+              <h3 id="blockCount">0</h3>
+              <p>총 블록 수</p>
+            </div>
+            <div class="stat-card">
+              <h3 id="transactionCount">0</h3>
+              <p>총 트랜잭션 수</p>
+            </div>
+            <div class="stat-card">
+              <h3 id="chainValid">❓</h3>
+              <p>체인 유효성</p>
+            </div>
+            <div class="stat-card">
+              <h3 id="connectedNodes">0</h3>
+              <p>연결된 노드</p>
+            </div>
+          </div>
+          <button class="btn btn-info" onclick="updateStats()">
+            통계 업데이트
+          </button>
+        </div>
+
+        <!-- 블록 마이닝 -->
+        <div class="section">
+          <h2>⛏️ 블록 마이닝</h2>
+          <div class="form-group">
+            <label>마이닝할 노드:</label>
+            <select id="miningNode">
+              <option value="http://127.0.0.1:5000">메인 노드 (5000)</option>
+              <option value="http://127.0.0.1:5001">노드 1 (5001)</option>
+              <option value="http://127.0.0.1:5002">노드 2 (5002)</option>
+              <option value="http://127.0.0.1:5003">노드 3 (5003)</option>
+            </select>
+          </div>
+          <button class="btn btn-success" onclick="mineBlock()">
+            블록 마이닝
+          </button>
+          <div id="miningResult" class="result" style="display: none"></div>
+        </div>
+
+        <!-- 트랜잭션 추가 -->
+        <div class="section">
+          <h2>💸 트랜잭션 추가</h2>
+          <div class="grid">
+            <div>
+              <div class="form-group">
+                <label>보내는 사람:</label>
+                <input type="text" id="sender" placeholder="보내는 사람 주소" />
+              </div>
+              <div class="form-group">
+                <label>받는 사람:</label>
+                <input type="text" id="receiver" placeholder="받는 사람 주소" />
+              </div>
+            </div>
+            <div>
+              <div class="form-group">
+                <label>금액:</label>
+                <input
+                  type="number"
+                  id="amount"
+                  placeholder="전송할 금액"
+                  step="0.01"
+                />
+              </div>
+              <div class="form-group">
+                <label>대상 노드:</label>
+                <select id="transactionNode">
+                  <option value="http://127.0.0.1:5000">
+                    메인 노드 (5000)
+                  </option>
+                  <option value="http://127.0.0.1:5001">노드 1 (5001)</option>
+                  <option value="http://127.0.0.1:5002">노드 2 (5002)</option>
+                  <option value="http://127.0.0.1:5003">노드 3 (5003)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-info" onclick="addTransaction()">
+            트랜잭션 추가
+          </button>
+          <div
+            id="transactionResult"
+            class="result"
+            style="display: none"
+          ></div>
+        </div>
+
+        <!-- 블록체인 조회 -->
+        <div class="section">
+          <h2>🔍 블록체인 조회</h2>
+          <div class="form-group">
+            <label>조회할 노드:</label>
+            <select id="chainNode">
+              <option value="http://127.0.0.1:5000">메인 노드 (5000)</option>
+              <option value="http://127.0.0.1:5001">노드 1 (5001)</option>
+              <option value="http://127.0.0.1:5002">노드 2 (5002)</option>
+              <option value="http://127.0.0.1:5003">노드 3 (5003)</option>
+            </select>
+          </div>
+          <button class="btn btn-info" onclick="getChain()">체인 조회</button>
+          <button class="btn btn-warning" onclick="checkValidity()">
+            유효성 검사
+          </button>
+          <div id="chainResult" class="result" style="display: none"></div>
+        </div>
+
+        <div class="loading" id="loading">
+          <div class="spinner"></div>
+          <p>처리 중...</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // API 호출 함수
+      async function apiCall(endpoint, data = {}) {
+        try {
+          const response = await fetch(`/api/${endpoint}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+          return await response.json();
+        } catch (error) {
+          return { error: `네트워크 오류: ${error.message}` };
+        }
+      }
+
+      // 결과 표시 함수
+      function showResult(elementId, data, isSuccess = true) {
+        const element = document.getElementById(elementId);
+        element.style.display = "block";
+        element.className = `result ${isSuccess ? "success" : "error"}`;
+
+        if (data.error) {
+          element.innerHTML = `<strong>오류:</strong> ${data.error}`;
+        } else {
+          element.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+      }
+
+      // 로딩 표시 함수
+      function showLoading(show = true) {
+        document.getElementById("loading").style.display = show
+          ? "block"
+          : "none";
+      }
+
+      // 노드 시작
+      async function startNodes() {
+        showLoading(true);
+        const result = await apiCall("start_nodes");
+        showLoading(false);
+
+        if (result.error) {
+          showResult("miningResult", result, false);
+        } else {
+          showResult("miningResult", result, true);
+          // 노드 상태 업데이트
+          setTimeout(updateNodeStatus, 2000);
+        }
+      }
+
+      // 노드 연결
+      async function connectNodes() {
+        showLoading(true);
+        const nodeUrl = document.getElementById("targetNode").value;
+        const result = await apiCall("connect_node", {
+          node_url: nodeUrl,
+          nodes: [
+            "http://127.0.0.1:5001",
+            "http://127.0.0.1:5002",
+            "http://127.0.0.1:5003",
+          ],
+        });
+        showLoading(false);
+        showResult("chainResult", result, !result.error);
+      }
+
+      // 체인 교체
+      async function replaceChain() {
+        showLoading(true);
+        const nodeUrl = document.getElementById("targetNode").value;
+        const result = await apiCall("replace_chain", { node_url: nodeUrl });
+        showLoading(false);
+        showResult("chainResult", result, !result.error);
+      }
+
+      // 블록 마이닝
+      async function mineBlock() {
+        showLoading(true);
+        const nodeUrl = document.getElementById("miningNode").value;
+        const result = await apiCall("mine_block", { node_url: nodeUrl });
+        showLoading(false);
+        showResult("miningResult", result, !result.error);
+
+        if (!result.error) {
+          setTimeout(updateStats, 1000);
+        }
+      }
+
+      // 트랜잭션 추가
+      async function addTransaction() {
+        const sender = document.getElementById("sender").value;
+        const receiver = document.getElementById("receiver").value;
+        const amount = document.getElementById("amount").value;
+        const nodeUrl = document.getElementById("transactionNode").value;
+
+        if (!sender || !receiver || !amount) {
+          showResult(
+            "transactionResult",
+            { error: "모든 필드를 입력해주세요" },
+            false
+          );
+          return;
+        }
+
+        showLoading(true);
+        const result = await apiCall("add_transaction", {
+          node_url: nodeUrl,
+          sender: sender,
+          receiver: receiver,
+          amount: amount,
+        });
+        showLoading(false);
+        showResult("transactionResult", result, !result.error);
+      }
+
+      // 체인 조회
+      async function getChain() {
+        showLoading(true);
+        const nodeUrl = document.getElementById("chainNode").value;
+        const result = await apiCall("get_chain", { node_url: nodeUrl });
+        showLoading(false);
+        showResult("chainResult", result, !result.error);
+      }
+
+      // 유효성 검사
+      async function checkValidity() {
+        showLoading(true);
+        const nodeUrl = document.getElementById("chainNode").value;
+        const result = await apiCall("is_valid", { node_url: nodeUrl });
+        showLoading(false);
+        showResult("chainResult", result, !result.error);
+      }
+
+      // 통계 업데이트
+      async function updateStats() {
+        const nodeUrl = "http://127.0.0.1:5000";
+
+        try {
+          const chainResult = await apiCall("get_chain", { node_url: nodeUrl });
+          const validityResult = await apiCall("is_valid", {
+            node_url: nodeUrl,
+          });
+
+          if (!chainResult.error) {
+            document.getElementById("blockCount").textContent =
+              chainResult.length || 0;
+
+            let totalTransactions = 0;
+            if (chainResult.chain) {
+              chainResult.chain.forEach((block) => {
+                if (block.transactions) {
+                  totalTransactions += block.transactions.length;
+                }
+              });
+            }
+            document.getElementById("transactionCount").textContent =
+              totalTransactions;
+          }
+
+          if (!validityResult.error) {
+            document.getElementById("chainValid").textContent =
+              validityResult.is_valid ? "✅" : "❌";
+          }
+        } catch (error) {
+          console.error("통계 업데이트 실패:", error);
+        }
+      }
+
+      // 노드 상태 업데이트
+      async function updateNodeStatus() {
+        const nodes = ["5000", "5001", "5002", "5003"];
+
+        for (const port of nodes) {
+          try {
+            const response = await fetch(`http://127.0.0.1:${port}/get_chain`);
+            if (response.ok) {
+              document.getElementById(`node-${port}`).className =
+                "node-status online";
+              document
+                .getElementById(`node-${port}`)
+                .querySelector(".status-indicator").className =
+                "status-indicator online";
+              document.getElementById(`status-${port}`).textContent = "온라인";
+            } else {
+              throw new Error("노드 응답 없음");
+            }
+          } catch (error) {
+            document.getElementById(`node-${port}`).className =
+              "node-status offline";
+            document
+              .getElementById(`node-${port}`)
+              .querySelector(".status-indicator").className =
+              "status-indicator offline";
+            document.getElementById(`status-${port}`).textContent = "오프라인";
+          }
+        }
+      }
+
+      // 페이지 로드 시 초기화
+      document.addEventListener("DOMContentLoaded", function () {
+        updateNodeStatus();
+        updateStats();
+
+        // 주기적으로 상태 업데이트
+        setInterval(updateNodeStatus, 10000);
+        setInterval(updateStats, 30000);
+      });
+    </script>
+  </body>
+</html>

@@ -1,14 +1,13 @@
 ### 실행 순서
 
-1. `python3 -m venv 01`
+# 의존성 설치
 
-2. `source 01/bin/activate`
+uv sync
 
-3. `pip3 install flask`
-   (`set FLASK_APP=main.py && set FLASK_ENV=development && FLASK_RUN_PORT=5000`)
+# Flask 웹 UI 실행
 
-   - automatic script needed
+uv run python3 main.py
 
-4. `pip3 install requests==2.18.4`
+# API 서버 실행
 
-5. `export FLASK_APP=main.py && flask run`
+uv run python main.py
